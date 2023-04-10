@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  app:
+    image: jboss/keycloak
+    container_name: keycloack
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_ADDR=db
+      - DB_VENDOR=mysql
+      - DB_DATABASE=keycloack
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=root
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - keycloacknetwork
+
+  db:
+    image: mysql:5.7
+    container_name: keycloack_mysql
+    restart: always
+    tty: true
+    ports:
+      - 33306:3306
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=keycloack
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks:
+      - keycloacknetwork
+
+networks:
+  keycloacknetwork:
+    driver: bridge
